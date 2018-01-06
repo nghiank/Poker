@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>217669477935-cau92a5e3e89i22nmceg5e4q7ivdv1ra.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.217669477935-cau92a5e3e89i22nmceg5e4q7ivdv1ra</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAe3hiMIU3ugHcm30zQplP0idaBnLFGMlw</string>
+	<key>GCM_SENDER_ID</key>
+	<string>217669477935</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.firebase.ios</string>
+	<key>PROJECT_ID</key>
+	<string>pokerg-bf08c</string>
+	<key>STORAGE_BUCKET</key>
+	<string>pokerg-bf08c.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true></true>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false></false>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:217669477935:ios:12e59ecf51e76e6d</string>
+	<key>DATABASE_URL</key>
+	<string>https://pokerg-bf08c.firebaseio.com</string>
+</dict>
+</plist>
