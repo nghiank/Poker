@@ -335,6 +335,7 @@ GameObject:
   - component: {fileID: 178973826}
   - component: {fileID: 178973825}
   - component: {fileID: 178973824}
+  - component: {fileID: 178973827}
   m_Layer: 5
   m_Name: RegisterButton
   m_TagString: Untagged
@@ -399,7 +400,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 178973825}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 178973827}
+        m_MethodName: RegsiterClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &178973825
@@ -435,6 +447,19 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 178973822}
+--- !u!114 &178973827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 178973822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e5ca0449c0ec4f2388a412ee732d89b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  email: {fileID: 154067198}
+  password: {fileID: 843240182}
 --- !u!1 &274788064
 GameObject:
   m_ObjectHideFlags: 0
@@ -1335,8 +1360,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 843240185}
   m_TextComponent: {fileID: 274788066}
   m_Placeholder: {fileID: 1859382097}
-  m_ContentType: 0
-  m_InputType: 0
+  m_ContentType: 7
+  m_InputType: 2
   m_AsteriskChar: 42
   m_KeyboardType: 0
   m_LineType: 0
