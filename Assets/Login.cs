@@ -3,33 +3,34 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Register : MonoBehaviour {
+public class Login : MonoBehaviour {
+
 	public GameObject email;
 	public GameObject password;
 
 	private string emailStr;
 	private string passwordStr;
 
-	public void RegsiterClick() {
-		print ("We are going to register for user :" + emailStr);
-		Firebase.Auth.FirebaseAuth.DefaultInstance.CreateUserWithEmailAndPasswordAsync(emailStr, passwordStr).ContinueWith(task => {
+
+	public void LoginClick() {
+		Firebase.Auth.Credential credential =
+			Firebase.Auth.EmailAuthProvider.GetCredential(emailStr, passwordStr);
+		Firebase.Auth.FirebaseAuth.DefaultInstance.SignInWithCredentialAsync(credential).ContinueWith(task => {
 			if (task.IsCanceled) {
-				Debug.LogError("CreateUserWithEmailAndPasswordAsync was canceled.");
+				Debug.LogError("SignInWithCredentialAsync was canceled.");
 				return;
 			}
 			if (task.IsFaulted) {
-				Debug.LogError("CreateUserWithEmailAndPasswordAsync encountered an error: " + task.Exception);
+				Debug.LogError("SignInWithCredentialAsync encountered an error: " + task.Exception);
 				return;
 			}
 
-			// Firebase user has been created.
 			Firebase.Auth.FirebaseUser newUser = task.Result;
-			Debug.LogFormat("Firebase user created successfully: {0} ({1})",
+			Debug.LogFormat("User signed in successfully: {0} ({1})",
 				newUser.DisplayName, newUser.UserId);
+			Debug.LogFormat("User data:" + newUser.UserId);
 		});
-
 	}
-		
 	// Use this for initialization
 	void Start () {
 		
