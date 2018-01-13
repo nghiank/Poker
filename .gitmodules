@@ -1,0 +1,3 @@
+[submodule "Assets/PokerSchema"]
+	path = Assets/PokerSchema
+	url = git@github.com:nghiank/PokerSchema.git
