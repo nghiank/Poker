@@ -59,7 +59,10 @@ public class Login : MonoBehaviour {
 				}
 
 				string idToken = idTokenTask.Result;
-				verifyTokenId(idToken);
+
+
+
+				//verifyTokenId(idToken);
 			});
 		});
 	}
@@ -98,11 +101,23 @@ public class Login : MonoBehaviour {
 			for(int i = 0; i < credBytes.Length; ++i) {
 				str += (credBytes[i]).ToString() + " ";		
 			}
-			Debug.Log("Setup the socket byte size:" + credBytes.Length);
+			Debug.Log("Setup the socket byte size:" + credBytes.Length + " token is=" + token);
 			Debug.Log("With Value = " + str);
 
+			byte[] bytes = BitConverter.GetBytes(credBytes.Length);
+			if (BitConverter.IsLittleEndian)
+				Array.Reverse(bytes);
+			stream.Write(bytes, 0, bytes.Length);
 			stream.Write(credBytes, 0, credBytes.Length);
 			stream.Flush();
+
+
+			int length1 = reader.Read();
+			int length2 = reader.Read();
+			int length = (length1 << 8) + length2;
+			Debug.Log("Data read = " + length1 + ", " + length2 + " .. " + length);
+
+
 		} catch(Exception e) {
 			Debug.Log("Excepion throw: "  + e.ToString());
 		}
