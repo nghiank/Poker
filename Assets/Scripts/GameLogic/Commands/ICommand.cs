@@ -1,6 +1,6 @@
 ﻿using System;
 
-public interface Command
+public interface ICommand
 {
 	void perform();
 }

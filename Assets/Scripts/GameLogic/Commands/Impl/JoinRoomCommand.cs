@@ -1,6 +1,6 @@
 ﻿using System;
 
-public class JoinRoomCommand 
+public class JoinRoomCommand: ICommand
 {
 	private string roomName;
 	public JoinRoomCommand (string roomName)

@@ -7,11 +7,10 @@ public class JoinRoom : MonoBehaviour {
 	public void JoinRoomClick() {
 		Debug.Log ("User Display Name: " + UserSession.Instance.getUserInfo ().getDisplayName ());
 		Debug.Log ("User Id : " + UserSession.Instance.getUserInfo ().getUserId ());
-		Debug.Log ("Auth token Id : " + UserSession.Instance.getAuthToken());
+		Debug.Log ("Auth token Id : " + UserSession.Instance.getAuthToken ());
 
+		//Command command = new JoinRoomCommand (RoomService.findRoom());
 
-		Command command = new JoinRoomCommand ();
-		UserSession.Instance.getGameManager ().doCommand (command);
 	}
 
 	// Use this for initialization
