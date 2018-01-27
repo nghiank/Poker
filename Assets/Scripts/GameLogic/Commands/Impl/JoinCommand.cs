@@ -11,7 +11,9 @@ public class JoinCommand: ICommand
 	}
 
 	public void perform() {
-		NetworkManager network = new NetworkManager ();
+		string hostId = "127.0.0.1";
+		int port = 8080;
+		NetworkManager network = new NetworkManager (hostId, port);
 	}
 }
 
