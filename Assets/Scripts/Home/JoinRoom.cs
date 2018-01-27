@@ -9,8 +9,11 @@ public class JoinRoom : MonoBehaviour {
 		Debug.Log ("User Id : " + UserSession.Instance.getUserInfo ().getUserId ());
 		Debug.Log ("Auth token Id : " + UserSession.Instance.getAuthToken ());
 
-		//Command command = new JoinRoomCommand (RoomService.findRoom());
 
+		// TODO: Build Command from builder
+		IRoomService roomService = new RoomService();
+		ICommand command = new JoinCommand (roomService.findRoom(), UserSession.Instance.getAuthToken());
+		command.perform ();
 	}
 
 	// Use this for initialization
