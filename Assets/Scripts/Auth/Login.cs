@@ -5,8 +5,9 @@ using UnityEngine.UI;
 using System.Net.Sockets;
 using System.IO;
 using FlatBuffers;
-using Schema;
+using schema;
 using System;
+using UnityEngine.SceneManagement;
 
 public class Login : MonoBehaviour {
 
@@ -22,12 +23,6 @@ public class Login : MonoBehaviour {
 	private StreamReader reader;
 	private bool socketReady;
 
-	public class NettyData
-	{
-		public int eventType;
-		public string username;
-	}
-
 	public void LoginClick() {
 		Firebase.Auth.Credential credential =
 			Firebase.Auth.EmailAuthProvider.GetCredential(emailStr, passwordStr);
@@ -40,14 +35,9 @@ public class Login : MonoBehaviour {
 				Debug.LogError("SignInWithCredentialAsync encountered an error: " + task.Exception);
 				return;
 			}
-
 			Firebase.Auth.FirebaseUser newUser = task.Result;
-
-
-			Debug.LogFormat("User signed in successfully: {0} ({1})",
-				newUser.DisplayName, newUser.UserId);
-			Debug.LogFormat("User data:" + newUser.UserId);
-
+			Console.WriteLine ("newUser={0}", newUser);
+		
 			newUser.TokenAsync(true).ContinueWith(idTokenTask => {
 				if (idTokenTask.IsCanceled) {
 					Debug.LogError("TokenAsync was canceled.");
@@ -59,10 +49,12 @@ public class Login : MonoBehaviour {
 				}
 
 				string idToken = idTokenTask.Result;
-
-
-
-				//verifyTokenId(idToken);
+				UserInfo userInfo = new UserInfo(new UserInfo.UserInfoBuilder().DisplayName(newUser.DisplayName).UserId(newUser.UserId));
+				UserSession.Instance.setAuthToken(idToken);
+				UserSession.Instance.setUserInfo(userInfo);
+				// TODO: DI for GameManager 
+				UserSession.Instance.setGameManager(new GameManager());
+				SceneManager.LoadScene("HomeScene", LoadSceneMode.Single);
 			});
 		});
 	}
@@ -78,7 +70,7 @@ public class Login : MonoBehaviour {
 			var cred = CredentialToken.EndCredentialToken(builder);
 			Debug.LogFormat("end message");
 			Message.StartMessage(builder);
-			Message.AddDataType(builder, Schema.Data.CredentialToken);
+			Message.AddDataType(builder, schema.Data.CredentialToken);
 			Message.AddData(builder, cred.Value);
 			var data = Message.EndMessage(builder);
 			Debug.LogFormat("Finish");

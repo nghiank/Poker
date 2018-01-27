@@ -4,6 +4,7 @@ public class UserSession
 {
 	private static UserSession instance;
 
+
 	private UserSession() {}
 
 	public static UserSession Instance
@@ -16,6 +17,11 @@ public class UserSession
 			}
 			return instance;
 		}
+	}
+
+	public void clearSession() {
+		this.authToken = "";
+		this.userInfo = null;
 	}
 
 	public void setAuthToken(string authToken) {
@@ -34,6 +40,15 @@ public class UserSession
 		return this.userInfo;
 	}
 
+	public GameManager getGameManager() {
+		return manager;
+	}
+
+	public void setGameManager(GameManager manager) {
+		this.manager = manager;
+	}
+
 	private string authToken;
 	private UserInfo userInfo;
+	private GameManager manager;
 }
