@@ -7,15 +7,15 @@ public class UserInfo
 
 	public UserInfo(UserInfoBuilder builder)
 	{
-		this.displayName = builder.getDisplayName();
-		this.userId = builder.getUserId ();
+		this.displayName = builder.GetDisplayName();
+		this.userId = builder.GetUserId ();
 	}
 		
-	public string getDisplayName() {
+	public string GetDisplayName() {
 		return displayName;
 	}
 
-	public string getUserId() {
+	public string GetUserId() {
 		return userId;
 	}
 
@@ -34,11 +34,11 @@ public class UserInfo
 			return this;
 		}
 
-		public string getDisplayName() {
+		public string GetDisplayName() {
 			return this.displayName;
 		}
 
-		public string getUserId() {
+		public string GetUserId() {
 			return this.userId;
 		}
 	}

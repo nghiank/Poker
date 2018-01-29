@@ -19,9 +19,7 @@ public class Login : MonoBehaviour {
 
 	private TcpClient socket;
 	private NetworkStream stream;
-	private StreamWriter writer;
 	private StreamReader reader;
-	private bool socketReady;
 
 	public void LoginClick() {
 		Firebase.Auth.Credential credential =
@@ -49,71 +47,18 @@ public class Login : MonoBehaviour {
 				}
 
 				string idToken = idTokenTask.Result;
+				UserSession userSession = new UserSession();
 				UserInfo userInfo = new UserInfo(new UserInfo.UserInfoBuilder().DisplayName(newUser.DisplayName).UserId(newUser.UserId));
-				UserSession.Instance.setAuthToken(idToken);
-				UserSession.Instance.setUserInfo(userInfo);
+				userSession.SetUserInfo(userInfo);
+				userSession.SetAuthToken(idToken);
 				// TODO: DI for GameManager 
-				UserSession.Instance.setGameManager(new GameManager());
+				userSession.SetGameManager(new GameManager());
+				ClientContext.Instance.SetUserSession(userSession);
 				SceneManager.LoadScene("HomeScene", LoadSceneMode.Single);
 			});
 		});
 	}
-
-	void verifyTokenId(String token) {
-		//set sample data
-		try {
-
-			var builder = new FlatBufferBuilder(1);
-			var tokenId = builder.CreateString(token);
-			CredentialToken.StartCredentialToken(builder);
-			CredentialToken.AddToken(builder, tokenId);
-			var cred = CredentialToken.EndCredentialToken(builder);
-			Debug.LogFormat("end message");
-			Message.StartMessage(builder);
-			Message.AddDataType(builder, schema.Data.CredentialToken);
-			Message.AddData(builder, cred.Value);
-			var data = Message.EndMessage(builder);
-			Debug.LogFormat("Finish");
-			builder.Finish(data.Value);
-			Debug.LogFormat("get sizebytearray");
-			byte[] credBytes = builder.SizedByteArray();
-
-			// TODO: Refactor this into different class
-			Debug.Log("Starting to connecting to Netty server...");
-			string host = "127.0.0.1";
-			int port = 8080;
-			socket = new TcpClient(host, port);
-			Debug.Log("Setup the socket herer...");
-			stream = socket.GetStream();
-			writer = new StreamWriter(stream);
-			reader = new StreamReader(stream);
-			socketReady = true;
-
-			String str = "";
-			for(int i = 0; i < credBytes.Length; ++i) {
-				str += (credBytes[i]).ToString() + " ";		
-			}
-			Debug.Log("Setup the socket byte size:" + credBytes.Length + " token is=" + token);
-			Debug.Log("With Value = " + str);
-
-			byte[] bytes = BitConverter.GetBytes(credBytes.Length);
-			if (BitConverter.IsLittleEndian)
-				Array.Reverse(bytes);
-			stream.Write(bytes, 0, bytes.Length);
-			stream.Write(credBytes, 0, credBytes.Length);
-			stream.Flush();
-
-
-			int length1 = reader.Read();
-			int length2 = reader.Read();
-			int length = (length1 << 8) + length2;
-			Debug.Log("Data read = " + length1 + ", " + length2 + " .. " + length);
-
-
-		} catch(Exception e) {
-			Debug.Log("Excepion throw: "  + e.ToString());
-		}
-	}
+		
 	// Use this for initialization
 	void Start () {
 		Screen.orientation = ScreenOrientation.LandscapeLeft;

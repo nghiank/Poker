@@ -4,16 +4,20 @@ using UnityEngine;
 
 public class JoinRoom : MonoBehaviour {
 
+
 	public void JoinRoomClick() {
-		Debug.Log ("User Display Name: " + UserSession.Instance.getUserInfo ().getDisplayName ());
-		Debug.Log ("User Id : " + UserSession.Instance.getUserInfo ().getUserId ());
-		Debug.Log ("Auth token Id : " + UserSession.Instance.getAuthToken ());
+		Debug.Log ("User Display Name: " + ClientContext.Instance.GetUserSession().GetUserInfo ().GetDisplayName ());
+		Debug.Log ("User Id : " + ClientContext.Instance.GetUserSession().GetUserInfo().GetUserId ());
+		Debug.Log ("Auth token Id : " + ClientContext.Instance.GetUserSession().GetAuthToken ());
 
 
 		// TODO: Build Command from builder
 		IRoomService roomService = new RoomService();
-		ICommand command = new JoinCommand (roomService.findRoom(), UserSession.Instance.getAuthToken());
-		command.perform ();
+		ICommand command = new JoinCommand (roomService.findRoom(), ClientContext.Instance.GetUserSession().GetAuthToken());
+
+		EventDispatcher dispatcher = new EventDispatcher ();
+		dispatcher.addListener (EventType.JOINED_ROOM_SUCCESS, new JoinRoomHandler(ClientContext.Instance.GetUserSession()));
+		command.perform (dispatcher);
 	}
 
 	// Use this for initialization

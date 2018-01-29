@@ -1,8 +1,5 @@
 ﻿using System;
 using UnityEngine.Networking;
-
-
-// TODO : abstract it
 using UnityEngine;
 using FlatBuffers;
 using System.Net;
@@ -25,6 +22,7 @@ public class NetworkManager
 
 	// Client socket
 	private Socket client;
+	private FlatBuffersDecoder decoder;
 
 	private String hostId;
 	private int port;
@@ -42,23 +40,14 @@ public class NetworkManager
 	NetworkCallback secondCallback;
 	NetworkCallback receiveCallback;
 
-
-	
 	public NetworkManager (string hostId, int port)
 	{
-		// Establish the remote endpoint for the socket.
-		// The name of the 
-		// remote device is "host.contoso.com".
 		this.hostId = hostId;
 		this.port = port;
-		//var joinRoom = SchemaBuilder.buildJoinRoom("Singapore", UserSession.Instance.getAuthToken());
-		//Send(client, SchemaBuilder.buildPrependedLength(joinRoom));
-		//sendDone.WaitOne();
-		Debug.Log ("Error1 when connect to 127.0.0.1:");
 	}
 
 	public void Connect(NetworkCallback callback) {
-		IPHostEntry ipHostInfo = Dns.Resolve(hostId);
+		IPHostEntry ipHostInfo = Dns.Resolve(this.hostId);
 		IPAddress ipAddress = ipHostInfo.AddressList[0];
 		IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
 		// Create a TCP/IP socket.
@@ -83,10 +72,7 @@ public class NetworkManager
 			Socket client = (Socket) ar.AsyncState;
 			// Complete the connection.
 			client.EndConnect(ar);
-
-			Console.WriteLine("Socket connected to {0}",
-				client.RemoteEndPoint.ToString());
-
+			Debug.Log("Socket connected to " + client.RemoteEndPoint.ToString());
 			if (this.connectCallback != null) {
 				this.connectCallback(ar);
 			}
@@ -97,11 +83,11 @@ public class NetworkManager
 		}
 	}
 
-	public void Send(Socket client, byte[] byteData, NetworkCallback sendCallback) {
+	public void Send(byte[] byteData, NetworkCallback sendCallback) {
 		// Begin sending the data to the remote device.
 		this.secondCallback = sendCallback;
 		client.BeginSend(byteData, 0, byteData.Length, 0,
-			new AsyncCallback(SendCallback), client);
+			new AsyncCallback(SendCallback), this.client);
 	}
 
 	private void SendCallback(IAsyncResult ar) {
@@ -111,7 +97,7 @@ public class NetworkManager
 
 			// Complete sending the data to the remote device.
 			int bytesSent = client.EndSend(ar);
-			Console.WriteLine("Sent {0} bytes to server.", bytesSent);
+			Debug.Log("Sent " + bytesSent + "bytes to server. + ");
 
 			if (this.secondCallback!=null) {
 				this.secondCallback(ar);
@@ -123,11 +109,12 @@ public class NetworkManager
 		}
 	}
 
-	public void Receive(Socket client, NetworkCallback receiveCallback) {
+	public void Receive(NetworkCallback receiveCallback) {
 		try {
 			// Create the state object.
 			StateObject state = new StateObject();
-			state.workSocket = client;
+			state.workSocket = this.client;
+			this.decoder = new FlatBuffersDecoder();
 
 			// Begin receiving the data from the remote device.
 			client.BeginReceive( state.buffer, 0, StateObject.BufferSize, 0,
@@ -137,7 +124,7 @@ public class NetworkManager
 		}
 	}
 
-	private static void ReceiveCallback( IAsyncResult ar ) {
+	private void ReceiveCallback( IAsyncResult ar ) {
 		try {
 			// Retrieve the state object and the client socket 
 			// from the asynchronous state object.
@@ -148,9 +135,7 @@ public class NetworkManager
 			int bytesRead = client.EndReceive(ar);
 
 			if (bytesRead > 0) {
-				// There might be more data, so store the data received so far.
-				//state.sb.Append(Encoding.ASCII.GetString(state.buffer,0,bytesRead));
-
+				this.decoder.Fetch(state.buffer);
 				// Get the rest of the data.
 				client.BeginReceive(state.buffer,0,StateObject.BufferSize,0,
 					new AsyncCallback(ReceiveCallback), state);
@@ -164,7 +149,21 @@ public class NetworkManager
 		}
 	}
 
+	public FlatBuffersDecoder getDecoder() {
+		return decoder;
+	}
 
+	public ManualResetEvent getConnectDoneEvent() {
+		return connectDone;
+	}
+
+	public ManualResetEvent getSendDoneEvent() {
+		return sendDone;
+	}
+
+	public ManualResetEvent getReceiveDoneEvent() {
+		return receiveDone;
+	}
 }
 
 

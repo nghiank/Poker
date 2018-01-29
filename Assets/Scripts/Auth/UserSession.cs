@@ -1,22 +1,9 @@
 ﻿using System;
+using schema;
 
 public class UserSession
 {
-	private static UserSession instance;
-
-
-	private UserSession() {}
-
-	public static UserSession Instance
-	{
-		get 
-		{
-			if (instance == null)
-			{
-				instance = new UserSession();
-			}
-			return instance;
-		}
+	public UserSession() {
 	}
 
 	public void clearSession() {
@@ -24,31 +11,40 @@ public class UserSession
 		this.userInfo = null;
 	}
 
-	public void setAuthToken(string authToken) {
+	public void SetAuthToken(string authToken) {
 		this.authToken = authToken;
 	}
 
-	public string getAuthToken() {
+	public string GetAuthToken() {
 		return this.authToken;
 	}
 
-	public void setUserInfo(UserInfo userInfo) {
+	public void SetUserInfo(UserInfo userInfo) {
 		this.userInfo = userInfo;
 	}
 
-	public UserInfo getUserInfo() {
+	public UserInfo GetUserInfo() {
 		return this.userInfo;
 	}
 
-	public GameManager getGameManager() {
+	public GameManager GetGameManager() {
 		return manager;
 	}
 
-	public void setGameManager(GameManager manager) {
+	public void SetGameManager(GameManager manager) {
 		this.manager = manager;
+	}
+
+	public ReconnectKey GetReconnectKey() {
+		return reconnectKey;
+	}
+
+	public void SetReconnectKey(ReconnectKey key) {
+		reconnectKey = key;
 	}
 
 	private string authToken;
 	private UserInfo userInfo;
 	private GameManager manager;
+	private ReconnectKey reconnectKey;
 }

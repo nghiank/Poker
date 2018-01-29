@@ -31,6 +31,20 @@ public class SchemaBuilder
 		return builder;
 	}
 
+	public static FlatBufferBuilder buildReconnectKey(string key) {
+		var builder = new FlatBufferBuilder(1);
+		var keyStr = builder.CreateString(key);
+		ReconnectKey.StartReconnectKey(builder);
+		ReconnectKey.AddKey(builder, keyStr);
+		var reconnectKey = ReconnectKey.EndReconnectKey(builder);
+		Message.StartMessage(builder);
+		Message.AddDataType(builder, schema.Data.ReconnectKey);
+		Message.AddData(builder, reconnectKey.Value);
+		var data = Message.EndMessage(builder);
+		builder.Finish(data.Value);
+		return builder;
+	}
+
 }
 
 
