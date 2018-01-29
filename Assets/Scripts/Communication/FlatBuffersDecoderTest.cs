@@ -11,19 +11,19 @@ public class FlatBuffersDecoderTest
 		Assert.AreEqual(decoder.getState(), FlatBuffersDecoder.ReadState.INITIAL);
 		byte[] b = new byte[1];
 		b[0] = 0;
-		decoder.Fetch(b);
+		decoder.Fetch(b, 1);
 		Assert.AreEqual(decoder.getState(), FlatBuffersDecoder.ReadState.READING_LENGTH);
 
 		byte[] b1 = new byte[1];
 		b1 [0] = 3;
-		decoder.Fetch (b1);
+		decoder.Fetch (b1, 1);
 		Assert.AreEqual(decoder.getState(), FlatBuffersDecoder.ReadState.READING_DATA);
 
 		byte[] b2 = new byte[3];
 		b2[0] = 1;
 		b2[1] = 2;
 		b2[2] = 3;
-		decoder.Fetch (b2);
+		decoder.Fetch (b2, 3);
 		Assert.AreEqual(decoder.getState(), FlatBuffersDecoder.ReadState.DONE);
 
 		byte[] res = decoder.getData ();
@@ -43,7 +43,7 @@ public class FlatBuffersDecoderTest
 		b [4] = 3;
 		b [5] = 4;
 		FlatBuffersDecoder decoder = new FlatBuffersDecoder();
-		decoder.Fetch (b);
+		decoder.Fetch (b, 6);
 		Assert.AreEqual(decoder.getState(), FlatBuffersDecoder.ReadState.DONE);
 		byte[] res = decoder.getData ();
 		Assert.AreEqual (res.Length, 4);

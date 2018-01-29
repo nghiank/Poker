@@ -25,18 +25,18 @@ public class FlatBuffersDecoder
 		return buf;
 	}
 
-	public void Fetch(byte[] buffer) {
+	public void Fetch(byte[] buffer, int len) {
 		switch (state) {
 		case ReadState.INITIAL:
 			if (buffer.Length == 1) {
 				bufLen = buffer [0] << 8; 
 				state = ReadState.READING_LENGTH;
-			} else if (buffer.Length > 1) {
+			} else if (len > 1) {
 				bufLen = ((int)buffer [0] << 8) + (int)buffer [1];
 				buf = new byte[bufLen];
-				if (buffer.Length > 2) {
-					Buffer.BlockCopy (buffer, 2, buf, pos, buffer.Length - 2);
-					pos += buffer.Length - 2;
+				if (len > 2) {
+					Buffer.BlockCopy (buffer, 2, buf, pos, len - 2);
+					pos += len - 2;
 				}
 				state = ReadState.READING_DATA;
 			}
@@ -45,14 +45,14 @@ public class FlatBuffersDecoder
 			bufLen += buffer [0];
 			buf = new byte[bufLen];
 			state = ReadState.READING_DATA;
-			if (buffer.Length > 1) {
-				Buffer.BlockCopy (buffer, 1, buf, pos, buffer.Length - 1);
-				pos += buffer.Length - 1;
+			if (len > 1) {
+				Buffer.BlockCopy (buffer, 1, buf, pos, len - 1);
+				pos += len - 1;
 			}
 			break;
 		case ReadState.READING_DATA:
-			Buffer.BlockCopy (buffer, 0, buf, pos, buffer.Length);
-			pos += buffer.Length;
+			Buffer.BlockCopy (buffer, 0, buf, pos, len);
+			pos += len;
 			break;
 		}
 

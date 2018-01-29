@@ -51,6 +51,9 @@ public class NetworkManager
 		IPAddress ipAddress = ipHostInfo.AddressList[0];
 		IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
 		// Create a TCP/IP socket.
+		if (this.client != null) {
+			Disconnect ();
+		}
 		this.client = new Socket(AddressFamily.InterNetwork,
 			SocketType.Stream, ProtocolType.Tcp);
 		// Connect to the remote endpoint.
@@ -97,7 +100,7 @@ public class NetworkManager
 
 			// Complete sending the data to the remote device.
 			int bytesSent = client.EndSend(ar);
-			Debug.Log("Sent " + bytesSent + "bytes to server. + ");
+			Debug.Log("Sent " + bytesSent + " bytes to server.");
 
 			if (this.secondCallback!=null) {
 				this.secondCallback(ar);
@@ -133,12 +136,20 @@ public class NetworkManager
 
 			// Read data from the remote device.
 			int bytesRead = client.EndReceive(ar);
+			Debug.Log("Received " + bytesRead + " bytes read from server.");
 
 			if (bytesRead > 0) {
-				this.decoder.Fetch(state.buffer);
-				// Get the rest of the data.
-				client.BeginReceive(state.buffer,0,StateObject.BufferSize,0,
-					new AsyncCallback(ReceiveCallback), state);
+				Debug.Log("Decoder state buffer size:" + state.buffer.Length);
+				this.decoder.Fetch(state.buffer, bytesRead);
+				Debug.Log("Decoder state:" + decoder.getState());
+				if (decoder.getState() != FlatBuffersDecoder.ReadState.DONE) {
+					// Get the rest of the data.
+					client.BeginReceive(state.buffer,0,StateObject.BufferSize,0,
+						new AsyncCallback(ReceiveCallback), state);	
+				} else {
+					receiveDone.Set();
+				}
+
 			} else {
 				// All the data has arrived; put it in response.
 				// Signal that all bytes have been received.
