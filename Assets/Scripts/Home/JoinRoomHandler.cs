@@ -10,7 +10,6 @@ public class JoinRoomHandler:IEventHandler
 	}
 
 	public void onEvent(Event evt, Object e) {
-
 		FlatBuffers.ByteBuffer buf = new FlatBuffers.ByteBuffer ((byte[])e);
 		Message msg = Message.GetRootAsMessage(buf);
 		if (msg.DataType == Data.ReconnectKey) {	

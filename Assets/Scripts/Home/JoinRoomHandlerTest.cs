@@ -18,5 +18,14 @@ public class JoinRoomHandlerTest
 		handler.onEvent (new Event(EventType.JOINED_ROOM_SUCCESS), e);
 		Assert.AreEqual (fakeUserSession.GetReconnectKey ().Key , "helloworld");
 	}
+
+	[Test]
+	public void JoinRoomHandlerTest_testInValidOnEvent ()
+	{
+		FakeUserSession fakeUserSession = new FakeUserSession ();
+		JoinRoomHandler handler = new JoinRoomHandler (fakeUserSession);
+		byte[] e = SchemaBuilder.buildJoinRoom("ad", "ef").SizedByteArray();
+		handler.onEvent (new Event(EventType.JOINED_ROOM_SUCCESS), e);
+	}
 }
 
