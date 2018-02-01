@@ -11,6 +11,7 @@ public enum Data : byte
  CredentialToken = 1,
  ReconnectKey = 2,
  JoinRoomCommand = 3,
+ PlayerInfo = 4,
 };
 
 

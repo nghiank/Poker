@@ -17,18 +17,23 @@ public struct PlayerInfo : IFlatbufferObject
   public void __init(int _i, ByteBuffer _bb) { __p.bb_pos = _i; __p.bb = _bb; }
   public PlayerInfo __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public string Name { get { int o = __p.__offset(4); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
-  public ArraySegment<byte>? GetNameBytes() { return __p.__vector_as_arraysegment(4); }
+  public string UserId { get { int o = __p.__offset(4); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
+  public ArraySegment<byte>? GetUserIdBytes() { return __p.__vector_as_arraysegment(4); }
+  public string Name { get { int o = __p.__offset(6); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
+  public ArraySegment<byte>? GetNameBytes() { return __p.__vector_as_arraysegment(6); }
 
   public static Offset<PlayerInfo> CreatePlayerInfo(FlatBufferBuilder builder,
+      StringOffset userIdOffset = default(StringOffset),
       StringOffset nameOffset = default(StringOffset)) {
-    builder.StartObject(1);
+    builder.StartObject(2);
     PlayerInfo.AddName(builder, nameOffset);
+    PlayerInfo.AddUserId(builder, userIdOffset);
     return PlayerInfo.EndPlayerInfo(builder);
   }
 
-  public static void StartPlayerInfo(FlatBufferBuilder builder) { builder.StartObject(1); }
-  public static void AddName(FlatBufferBuilder builder, StringOffset nameOffset) { builder.AddOffset(0, nameOffset.Value, 0); }
+  public static void StartPlayerInfo(FlatBufferBuilder builder) { builder.StartObject(2); }
+  public static void AddUserId(FlatBufferBuilder builder, StringOffset userIdOffset) { builder.AddOffset(0, userIdOffset.Value, 0); }
+  public static void AddName(FlatBufferBuilder builder, StringOffset nameOffset) { builder.AddOffset(1, nameOffset.Value, 0); }
   public static Offset<PlayerInfo> EndPlayerInfo(FlatBufferBuilder builder) {
     int o = builder.EndObject();
     return new Offset<PlayerInfo>(o);
