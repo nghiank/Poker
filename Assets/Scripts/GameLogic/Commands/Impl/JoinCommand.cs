@@ -12,29 +12,33 @@ public class JoinCommand: ICommand
 		this.authToken = authToken;
 	}
 
+	private void signalJoinFailed(EventDispatcher dispatcher) {
+		Event failed = new Event (EventType.JOINED_ROOM_FAILED);
+		dispatcher.dispatchEvent (failed, null);
+	}
+
 	public void perform(EventDispatcher dispatcher) {
 		string hostId = "127.0.0.1";
 		int port = 8080;
 		NetworkManager network = new NetworkManager (hostId, port);
+		Debug.Log("Join room connect!");
 		network.Connect (null);
-		network.getConnectDoneEvent ().WaitOne ();
+		if (!network.getConnectDoneEvent ().WaitOne (Constants.TIME_OUT_MS)) {
+			signalJoinFailed (dispatcher);
+			return;
+		}
+		Debug.Log("Connecting to room!");
 
 		var joinRoom = SchemaBuilder.buildJoinRoom("Singapore", ClientContext.Instance.GetUserSession().GetAuthToken());
-
 		Debug.Log("Join room in progress...");
 		network.Send(SchemaBuilder.buildPrependedLength(joinRoom), null);
-		network.getSendDoneEvent().WaitOne();
+		if (!network.getSendDoneEvent ().WaitOne (Constants.TIME_OUT_MS)) {
+			signalJoinFailed (dispatcher);
+			return;
+		}
 		Debug.Log("Join room sent done!");
-		network.Receive (null);
-		network.getReceiveDoneEvent ().WaitOne (Constants.TIME_OUT_MS);
-
-		if (network.getDecoder ().getState () == FlatBuffersDecoder.ReadState.DONE) {
-			Event success = new Event (EventType.JOINED_ROOM_SUCCESS);
-			dispatcher.dispatchEvent (success, network.getDecoder ().getData ());
-		} else {
-			Event failed = new Event (EventType.JOINED_ROOM_FAILED);
-			dispatcher.dispatchEvent (failed, null);
-		} 
+		Event success = new Event (EventType.JOINED_ROOM_SUCCESS);
+		dispatcher.dispatchEvent (success, network);
 	}
 }
 

@@ -7,6 +7,9 @@ using System.Net.Sockets;
 using System.Threading;
 
 // State object for receiving data from remote device.
+using schema;
+
+
 public class StateObject {
 	// Client socket.
 	public Socket workSocket = null;
@@ -19,7 +22,7 @@ public class StateObject {
 public class NetworkManager
 {
 	public delegate void NetworkCallback(IAsyncResult ar);
-
+	public delegate void ReceiveDataCallback(Message msg);
 	// Client socket
 	private Socket client;
 	private FlatBuffersDecoder decoder;
@@ -38,12 +41,16 @@ public class NetworkManager
 	// TODO: pass these directly in the function call
 	NetworkCallback connectCallback;
 	NetworkCallback secondCallback;
-	NetworkCallback receiveCallback;
+	ReceiveDataCallback receiveCallback;
 
 	public NetworkManager (string hostId, int port)
 	{
 		this.hostId = hostId;
 		this.port = port;
+	}
+
+	~NetworkManager() {
+		Disconnect();
 	}
 
 	public void Connect(NetworkCallback callback) {
@@ -62,6 +69,8 @@ public class NetworkManager
 		this.client.BeginConnect( remoteEP, 
 			new AsyncCallback(ConnectCallback), client);
 	}
+
+
 		
 	public void Disconnect() {
 		// Release the socket.
@@ -112,12 +121,14 @@ public class NetworkManager
 		}
 	}
 
-	public void Receive(NetworkCallback receiveCallback) {
+	public void Receive(ReceiveDataCallback receiveCallback) {
 		try {
+			Debug.Log("Start receiving bytes read from server.");
 			// Create the state object.
 			StateObject state = new StateObject();
 			state.workSocket = this.client;
 			this.decoder = new FlatBuffersDecoder();
+			this.receiveCallback = receiveCallback;
 
 			// Begin receiving the data from the remote device.
 			client.BeginReceive( state.buffer, 0, StateObject.BufferSize, 0,
@@ -147,13 +158,27 @@ public class NetworkManager
 					client.BeginReceive(state.buffer,0,StateObject.BufferSize,0,
 						new AsyncCallback(ReceiveCallback), state);	
 				} else {
+					Debug.Log("ReceivedCallBack : " + receiveCallback);
+
+					if (this.receiveCallback != null) {
+
+						Debug.Log("TRY TO CALL CALLBACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+						ByteBuffer bb = new ByteBuffer(this.decoder.getData());
+						Message m = Message.GetRootAsMessage(bb);
+						this.receiveCallback(m);
+					}
 					receiveDone.Set();
 				}
 
 			} else {
+				Debug.Log("ZERO BYTE READ......................");
 				// All the data has arrived; put it in response.
 				// Signal that all bytes have been received.
 				receiveDone.Set();
+
+				if (this.receiveCallback != null) {
+					
+				}
 			}
 		} catch (Exception e) {
 			Console.WriteLine(e.ToString());

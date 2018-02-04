@@ -17,7 +17,7 @@ public class JoinRoom : MonoBehaviour {
 
 		EventDispatcher dispatcher = new EventDispatcher ();
 		dispatcher.addListener (EventType.JOINED_ROOM_SUCCESS, new JoinRoomHandler(ClientContext.Instance.GetUserSession()));
-		dispatcher.addListener (EventType.JOINED_ROOM_SUCCESS, new SwitchSceneHandler ("RoomScene"));
+		//dispatcher.addListener (EventType.JOINED_ROOM_SUCCESS, new SwitchSceneHandler ("RoomScene"));
 		command.perform (dispatcher);
 	}
 

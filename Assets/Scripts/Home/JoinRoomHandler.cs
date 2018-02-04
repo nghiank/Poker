@@ -1,5 +1,8 @@
 ﻿using System;
 using schema;
+using UnityEngine.SceneManagement;
+using UnityEngine;
+
 
 public class JoinRoomHandler:IEventHandler
 {
@@ -9,13 +12,13 @@ public class JoinRoomHandler:IEventHandler
 		this.userSession = userSession;
 	}
 
-	public void onEvent(Event evt, Object e) {
-		FlatBuffers.ByteBuffer buf = new FlatBuffers.ByteBuffer ((byte[])e);
-		Message msg = Message.GetRootAsMessage(buf);
-		if (msg.DataType == Data.ReconnectKey) {	
-			ReconnectKey reconnectKey = (ReconnectKey)(msg.Data<ReconnectKey>());
-			userSession.SetReconnectKey (reconnectKey);
-		}
+	public void onEvent(Event evt, System.Object e) {
+		SceneManager.LoadScene("RoomScene", LoadSceneMode.Single);
+		NetworkManager network = (NetworkManager)e;
+		GameManager gameManager = ClientContext.Instance.GetUserSession ().GetGameManager ();
+		gameManager.setNetworkManager (network);
+		Debug.Log ("Starting receiving data..");
+		network.Receive (gameManager.HandleIncomingData);
 	}
 }
 

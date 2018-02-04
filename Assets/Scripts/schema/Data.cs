@@ -12,6 +12,7 @@ public enum Data : byte
  ReconnectKey = 2,
  JoinRoomCommand = 3,
  PlayerInfo = 4,
+ RoomInfo = 5,
 };
 
 
