@@ -57,7 +57,7 @@ public class NetworkManager
 		IPHostEntry ipHostInfo = Dns.Resolve(this.hostId);
 		IPAddress ipAddress = ipHostInfo.AddressList[0];
 		IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
-		this.client = new Socket(AddressFamily.InterNetwork,
+		this.client = new Socket(ipAddress.AddressFamily,
 			SocketType.Stream, ProtocolType.Tcp);
 		// Connect to the remote endpoint.
 		// TODO : find a way to pass it directly into BeginConnect
