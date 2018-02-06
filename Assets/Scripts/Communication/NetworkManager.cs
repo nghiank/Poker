@@ -57,17 +57,13 @@ public class NetworkManager
 		IPHostEntry ipHostInfo = Dns.Resolve(this.hostId);
 		IPAddress ipAddress = ipHostInfo.AddressList[0];
 		IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
-		// Create a TCP/IP socket.
-		if (this.client != null) {
-			Disconnect ();
-		}
 		this.client = new Socket(AddressFamily.InterNetwork,
 			SocketType.Stream, ProtocolType.Tcp);
 		// Connect to the remote endpoint.
 		// TODO : find a way to pass it directly into BeginConnect
 		this.connectCallback = callback;
 		this.client.BeginConnect( remoteEP, 
-			new AsyncCallback(ConnectCallback), client);
+			new AsyncCallback(ConnectCallback), this.client);
 	}
 
 
@@ -81,9 +77,10 @@ public class NetworkManager
 	private void ConnectCallback(IAsyncResult ar) {
 		try {
 			// Retrieve the socket from the state object.
-			Socket client = (Socket) ar.AsyncState;
+			Socket handler = (Socket) ar.AsyncState;
 			// Complete the connection.
 			client.EndConnect(ar);
+			this.client = handler;
 			Debug.Log("Socket connected to " + client.RemoteEndPoint.ToString());
 			if (this.connectCallback != null) {
 				this.connectCallback(ar);
@@ -123,7 +120,6 @@ public class NetworkManager
 
 	public void Receive(ReceiveDataCallback receiveCallback) {
 		try {
-			Debug.Log("Start receiving bytes read from server.");
 			// Create the state object.
 			StateObject state = new StateObject();
 			state.workSocket = this.client;
@@ -143,12 +139,10 @@ public class NetworkManager
 			// Retrieve the state object and the client socket 
 			// from the asynchronous state object.
 			StateObject state = (StateObject) ar.AsyncState;
-			Socket client = state.workSocket;
+			this.client = state.workSocket;
 
 			// Read data from the remote device.
 			int bytesRead = client.EndReceive(ar);
-			Debug.Log("Received " + bytesRead + " bytes read from server.");
-
 			if (bytesRead > 0) {
 				Debug.Log("Decoder state buffer size:" + state.buffer.Length);
 				this.decoder.Fetch(state.buffer, bytesRead);
@@ -158,26 +152,22 @@ public class NetworkManager
 					client.BeginReceive(state.buffer,0,StateObject.BufferSize,0,
 						new AsyncCallback(ReceiveCallback), state);	
 				} else {
-					Debug.Log("ReceivedCallBack : " + receiveCallback);
 
 					if (this.receiveCallback != null) {
-
-						Debug.Log("TRY TO CALL CALLBACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 						ByteBuffer bb = new ByteBuffer(this.decoder.getData());
 						Message m = Message.GetRootAsMessage(bb);
 						this.receiveCallback(m);
 					}
-					receiveDone.Set();
+					//Listening to server again.
+					if (this.receiveCallback != null) {
+						this.Receive(this.receiveCallback);
+					}
 				}
 
 			} else {
-				Debug.Log("ZERO BYTE READ......................");
-				// All the data has arrived; put it in response.
-				// Signal that all bytes have been received.
-				receiveDone.Set();
-
+				//Listening to server again.
 				if (this.receiveCallback != null) {
-					
+					this.Receive(this.receiveCallback);
 				}
 			}
 		} catch (Exception e) {

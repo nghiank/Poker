@@ -23,6 +23,8 @@ public class SchemaBuilder
 		JoinRoomCommand.AddToken(builder, authTokenStr);
 		JoinRoomCommand.AddRoomId (builder, roomIdStr);
 		var joinCmd = JoinRoomCommand.EndJoinRoomCommand(builder);
+
+		// TODO: extract the below part out to be reusable.
 		Message.StartMessage(builder);
 		Message.AddDataType(builder, schema.Data.JoinRoomCommand);
 		Message.AddData(builder, joinCmd.Value);
