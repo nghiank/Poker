@@ -5,12 +5,11 @@
 namespace schema
 {
 
-public enum Data : byte
+public enum PlayerStatus : sbyte
 {
- NONE = 0,
- JoinRoomCommand = 1,
- RoomInfo = 2,
- PlayerUpdate = 3,
+ Unknown = 0,
+ Arrive = 1,
+ Left = 2,
 };
 
 

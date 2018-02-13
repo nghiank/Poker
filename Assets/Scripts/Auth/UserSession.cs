@@ -35,16 +35,7 @@ public class UserSession
 		this.manager = manager;
 	}
 
-	public ReconnectKey GetReconnectKey() {
-		return reconnectKey;
-	}
-
-	public void SetReconnectKey(ReconnectKey key) {
-		reconnectKey = key;
-	}
-
 	private string authToken;
 	private UserInfo userInfo;
 	private GameManager manager;
-	private ReconnectKey reconnectKey;
 }
