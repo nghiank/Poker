@@ -11,6 +11,7 @@ public enum Data : byte
  JoinRoomCommand = 1,
  RoomInfo = 2,
  PlayerUpdate = 3,
+ ErrorMessage = 4,
 };
 
 
